@@ -16,7 +16,7 @@ class Logs(commands.Cog):
         channels = ctx.guild.channels
         log = discord.utils.get(ctx.guild.channels, name='server-log')
         disabledlog = discord.utils.get(ctx.guild.channels, name='server-log-disabled')
-        if status == 'Enable':
+        if status == 'enable':
             if log in channels:
                 await ctx.send("Logging Enabled.")
             elif disabledlog is not None:
@@ -26,7 +26,7 @@ class Logs(commands.Cog):
                 await ctx.send("Enabling Server Log..")
                 await ctx.guild.create_text_channel('server-log')
                 await ctx.send("Logging Enabled.")
-        if status == 'Disable':
+        if status == 'disable':
             if log is not None:
                 await log.edit(reason=None, name='server-log-disabled')
                 await ctx.send("Logging Disabled.")
@@ -172,25 +172,25 @@ class Logs(commands.Cog):
         if log is None:
             return
 
-    @commands.Cog.listener()
-    async def on_message_edit(self, before, after):
-        log = discord.utils.get(before.guild.channels, name='server-log')
-        channel = before.channel
-        gname = before.guild.name
-        gicon = before.guild.icon_url
-        avatar = before.author.avatar_url
-        if log is not None:
-            embed = discord.Embed(title="Message Edited", description="A message was edited by *{}* in *{}*.".format(before.author.name, channel), color = 0xe22f32)
-            embed.set_author(name=gname, icon_url=gicon)
-            embed.add_field(name="**Author Name:**", value=before.author.name, inline=True)
-            embed.add_field(name="**Author Username:**", value=before.author, inline=True)
-            embed.add_field(name="**Author ID:**", value=before.author.id, inline=False)
-            embed.add_field(name="**Message Before:**", value=before.content, inline=True)
-            embed.add_field(name="**Message After:**", value=after.content, inline=True)
-            embed.set_thumbnail(url=avatar)
-            await log.send(embed=embed)
-        if log is None:
-            return
+#    @commands.Cog.listener()
+#    async def on_message_edit(self, before, after):
+#        log = discord.utils.get(before.guild.channels, name='server-log')
+#        channel = before.channel
+#        gname = before.guild.name
+#        gicon = before.guild.icon_url
+#        avatar = before.author.avatar_url
+#        if log is not None:
+#            embed = discord.Embed(title="Message Edited", description="A message was edited by *{}* in *{}*.".format(before.author.name, channel), color = 0xe22f32)
+#            embed.set_author(name=gname, icon_url=gicon)
+#            embed.add_field(name="**Author Name:**", value=before.author.name, inline=True)
+#            embed.add_field(name="**Author Username:**", value=before.author, inline=True)
+#            embed.add_field(name="**Author ID:**", value=before.author.id, inline=False)
+#            embed.add_field(name="**Message Before:**", value=before.content, inline=True)
+#            embed.add_field(name="**Message After:**", value=after.content, inline=True)
+#            embed.set_thumbnail(url=avatar)
+#            await log.send(embed=embed)
+#        if log is None:
+#            return
 
     @commands.Cog.listener()
     async def on_member_ban(self, guild, member):
@@ -215,50 +215,97 @@ class Logs(commands.Cog):
         if log is not None:
             if before.status != after.status:
                 user = before.mention
-                embed = discord.Embed(title='**Status Change** | :eyes: ', description="{}'s status changed".format(user), color=0xfc4156)
+                gname = before.guild.name
+                gicon = before.guild.icon_url
+                embed = discord.Embed(title='**Status Change**', description="{}'s status changed".format(user), color=0xfc4156)
                 embed.add_field(name="**Changed To**", value="Member's status changed from **{}** to **{}**".format(before.status, after.status))
                 embed.set_thumbnail(url=before.avatar_url)
-                embed.set_author(name="Logging Change", icon_url="https://cdn.discordapp.com/app-icons/481923206848970803/394817ba790d2fbb9c36715a7ec00576.png")
-                embed.set_footer(text="Delta Data Report")
+                embed.set_author(name=gname, icon_url=gicon)
                 await log.send(embed=embed)
             if before.activity != after.activity:
                 user = before.mention
-                embed = discord.Embed(title='**Game Changed** | :joystick: ', description="{}'s playing a new game".format(user), color=0xfc4156)
-                embed.add_field(name="**Changed To**", value="Member's game changed from **{}** to **{}**".format(before.game, after.game))
+                gname = before.guild.name
+                gicon = before.guild.icon_url
+                embed = discord.Embed(title='**Activity Changed**', description="{}'s started a new activity.".format(user), color=0xfc4156)
+                embed.add_field(name="**Changed To**", value="Member's activity changed from **{}** to **{}**".format(before.activity.name, after.activity.name))
                 embed.set_thumbnail(url=before.avatar_url)
-                embed.set_author(name="Logging Change", icon_url="https://cdn.discordapp.com/app-icons/481923206848970803/394817ba790d2fbb9c36715a7ec00576.png")
-                embed.set_footer(text="Delta Data Report")
+                embed.set_author(name=gname, icon_url=gicon)
                 await log.send(embed=embed)
             if before.nick != after.nick:
                 user = before.mention
-                embed = discord.Embed(title='**Name Changed** | :pencil: ', description="{}'s name changed".format(user), color=0xfc4156)
+                gname = before.guild.name
+                gicon = before.guild.icon_url
+                embed = discord.Embed(title='**Name Changed**', description="{}'s name changed".format(user), color=0xfc4156)
                 embed.add_field(name="**Username**", value=before.name)
                 embed.add_field(name="**Changed To**", value="Member's name changed from **{}** to **{}**".format(before.nick, after.nick))
                 embed.set_thumbnail(url=before.avatar_url)
-                embed.set_author(name="Logging Change", icon_url="https://cdn.discordapp.com/app-icons/481923206848970803/394817ba790d2fbb9c36715a7ec00576.png")
-                embed.set_footer(text="Delta Data Report")
+                embed.set_author(name=gname, icon_url=gicon)
                 await log.send(embed=embed)
             if before.top_role != after.top_role:
                 roles = after.roles
                 user = before.mention
-                embed = discord.Embed(title='**Role Changed** | :briefcase: ', description="{}'s role changed".format(user), color=0xfc4156)
-                embed.add_field(name="**Username**", value=before.name)
-                embed.add_field(name="**Changed To**", value="Member's role changed from **{}** to **{}**".format(before.top_role, after.top_role))
-                embed.add_field(name="**Held Roles**", value=", ".join([role.name for role in roles]))
+                gname = before.guild.name
+                gicon = before.guild.icon_url
+                embed = discord.Embed(title='**Role Changed**', description="{}'s role changed".format(user), color=0xfc4156)
+                embed.add_field(name="**Username**", value=before.name, inline=True)
+                embed.add_field(name="**Held Roles**", value=", ".join([role.name for role in roles]), inline=True)
+                embed.add_field(name="**Changed To**", value="Member's role changed from **{}** to **{}**".format(before.top_role, after.top_role), inline=False)
                 embed.set_thumbnail(url=before.avatar_url)
-                embed.set_author(name="Logging Change", icon_url="https://cdn.discordapp.com/app-icons/481923206848970803/394817ba790d2fbb9c36715a7ec00576.png")
-                embed.set_footer(text="Delta Data Report")
+                embed.set_author(name=gname, icon_url=gicon)
                 await log.send(embed=embed)
             if before.avatar_url != after.avatar_url:
                 user = before.mention
-                embed = discord.Embed(title='**Avatar Changed** | :eyes: ', description="{}'s changed their avatar".format(user), color=0xfc4156)
+                gname = before.guild.name
+                gicon = before.guild.icon_url
+                embed = discord.Embed(title='**Avatar Changed**', description="{}'s changed their avatar".format(user), color=0xfc4156)
                 embed.add_field(name="**Username**", value=before.name)
                 embed.set_thumbnail(url=before.avatar_url)
-                embed.set_author(name="Logging Change", icon_url="https://cdn.discordapp.com/app-icons/481923206848970803/394817ba790d2fbb9c36715a7ec00576.png")
-                embed.set_footer(text="Delta Data Report")
+                embed.set_author(name=gname, icon_url=gicon)
                 await log.send(embed=embed)
                 embed.set_thumbnail(url=after.avatar_url)
                 await log.send(embed=embed)
+        if log is None:
+            return
+
+    @commands.Cog.listener()
+    async def on_guild_role_create(self, role):
+        log = discord.utils.get(role.guild.channels, name='server-log')
+        if log is not None:
+            gname = role.guild.name
+            gicon = role.guild.icon_url
+            embed = discord.Embed(title="**Role Created**", description="A role was created.", color=0xfc4156)
+            embed.add_field(name="**Role Name**", value="**{}** was created.".format(role.name))
+            embed.set_author(name=gname, icon_url=gicon)
+            await log.send(embed=embed)
+        if log is None:
+            return
+
+    @commands.Cog.listener()
+    async def on_guild_role_update(self, before, after):
+        log = discord.utils.get(before.guild.channels, name='server-log')
+        if log is not None:
+            if before.name != after.name:
+                gname = before.guild.name
+                gicon = before.guild.icon_url
+                embed = discord.Embed(title="**Role Edited**", description="A role was edited.", color=0xfc4156)
+                embed.add_field(name="**Role Edited**", value="**{}** was changed to **{}**.".format(before.name, after.mention))
+                embed.set_author(name=gname, icon_url=gicon)
+                await log.send(embed=embed)
+            else:
+                return
+        if log is None:
+            return
+
+    @commands.Cog.listener()
+    async def on_guild_role_delete(self, role):
+        log = discord.utils.get(role.guild.channels, name='server-log')
+        if log is not None:
+            gname = role.guild.name
+            gicon = role.guild.icon_url
+            embed = discord.Embed(title="**Role Deleted**", description="A role was deleted.", color=0xfc4156)
+            embed.add_field(name="**Role Name**", value="**{}** was deleted.".format(role.name))
+            embed.set_author(name=gname, icon_url=gicon)
+            await log.send(embed=embed)
         if log is None:
             return
 
@@ -270,7 +317,6 @@ class Logs(commands.Cog):
             embed = discord.Embed(color = 0xfc4156)
             embed.add_field(name='**Logging Error:**', value="Please include either 'Enable' or 'Disable'.", inline=False)
             await ctx.send(embed=embed)
-
 
 def setup(client):
     client.add_cog(Logs(client))

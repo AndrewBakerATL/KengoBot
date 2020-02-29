@@ -4,6 +4,7 @@ import random
 import asyncio
 import os
 from itertools import cycle
+import json
 
 # Command Prefix
 
@@ -15,6 +16,10 @@ client = commands.Bot(command_prefix = '!')
 async def reload_moderation(ctx, extension):
     client.load_extension(f'moderation.{extension}')
     client.unload_extension(f'moderation.{extension}')
+
+#for filename in os.listdir('./system'):
+#    if filename.endswith('.py'):
+#        client.load_extension(f'system.{filename[:-3]}')
 
 for filename in os.listdir('./checks'):
     if filename.endswith('.py'):
@@ -40,9 +45,9 @@ for filename in os.listdir('./misc'):
     if filename.endswith('.py'):
         client.load_extension(f'misc.{filename[:-3]}')
 
-# for filename in os.listdir('./streaming'):
-#     if filename.endswith('.py'):
-#         client.load_extension(f'streaming.{filename[:-3]}')
+for filename in os.listdir('./streaming'):
+    if filename.endswith('.py'):
+        client.load_extension(f'streaming.{filename[:-3]}')
 
 # Help Command
 
@@ -81,5 +86,7 @@ async def info(ctx):
 
 # Token Settings
 
-Token = 'Token'
-client.run(Token)
+with open('config.json') as json_file:
+    data = json.load(json_file)
+    Token = data['client']['token']
+    client.run(Token)

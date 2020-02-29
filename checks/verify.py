@@ -13,13 +13,8 @@ class Verify(commands.Cog):
         print('Bot Online')
         print("Bot Name: {}".format(self.client.user.name))
         print("Bot running under user: {}".format(self.client.user))
-#        await self.client.change_presence(status=discord.Status.dnd, activity=discord.Game('...'))
-        self.change_status.start()
-
-    @tasks.loop(seconds=5)
-    async def change_status(self):
-        status = cycle(['Guarding the server..', 'Saving Servers...', 'Finding Bugs...'])
-        await self.client.change_presence(activity=discord.Game(next(status)))
+        game = discord.Game("Guarding the server...")
+        await self.client.change_presence(status=discord.Status.dnd, activity=game)
 
 # Commands
 

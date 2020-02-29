@@ -29,5 +29,7 @@ class Echeck(commands.Cog):
             embed.add_field(name='**Error Check:**', value="You're missing a required argument.", inline=False)
             await ctx.send(embed=embed)
 
+        print(error)
+
 def setup(client):
     client.add_cog(Echeck(client))
