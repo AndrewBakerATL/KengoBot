@@ -172,8 +172,8 @@ class Music(commands.Cog):
         gicon = ctx.guild.icon_url
         player = self.client.wavelink.get_player(ctx.guild.id)
 
-        lgth = player.current.length
-        seconds = int(int(lgth) / int(1000))
+        current = player.current
+        seconds = int(int(current.length) / int(1000))
         minutes = seconds / int(60)
         remains = seconds % int(60)
 
@@ -182,7 +182,7 @@ class Music(commands.Cog):
         embed = discord.Embed(title="**Playing Music**", description="Currently playing.", color = 0xe22f32)
         embed.add_field(name="***Now Playing***", value="{}".format(player.current.title), inline=True)
         embed.add_field(name="**Song Length**", value="{}:{}".format(int(minutes), int(remains)), inline=True)
-        embed.set_thumbnail(url=str(gicon))
+        embed.set_thumbnail(url=str(current.thumb))
         embed.set_footer(text="Music Player")
         await ctx.send(embed=embed)
 
